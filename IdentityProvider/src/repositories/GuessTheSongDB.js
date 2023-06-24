@@ -1,4 +1,3 @@
-import { config } from 'dotenv';
 import mysql from 'mysql2'
 
 const connectionPool = mysql.createPool({
@@ -9,24 +8,6 @@ const connectionPool = mysql.createPool({
     port: 3306,
     namedPlaceholders: true
 });
-
-// export const execSQL = (sql, parameters) => 
-//     new Promise((resolve, reject) => {
-
-//         const connection = connectionPool.getConnection();
-
-//         connection.format(sql, parameters);
-
-//         connection.connect((err) => {
-//             if (err) throw err;
-
-//             connection.query(sql, parameters, (err, result) => {
-//                 if (err) throw reject(err);
-//                 resolve(result);
-//                 connection.end();
-//             });
-//         });
-// })
 
 export const execSQL = async (sql, parameters) => {
     const pool = connectionPool.promise();
