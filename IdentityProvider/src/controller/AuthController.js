@@ -6,7 +6,8 @@ export const register = async (req, res) => {
 
     const { username, password } = req.body;
 
-    const existingUser = await getUserByUsername(username);
+    let existingUser = await getUserByUsername(username);
+    existingUser = existingUser[0];
 
     if (existingUser.length > 0) {
         return res
@@ -31,7 +32,8 @@ export const login = async (req, res) => {
 
     const { username, password } = req.body;
 
-    const result = await getUserAndPasswordByUsername(username);
+    let result = await getUserAndPasswordByUsername(username);
+    result = result[0];
 
     if (result.length < 1)
         return res
@@ -63,7 +65,8 @@ export const authorize = async (req, res) => {
                 reason: "Verification not provided"
             });
 
-    const result = await getUserAndPasswordByUsername(req.body.user);
+    let result = await getUserAndPasswordByUsername(req.body.user);
+    result = result[0];
 
     if (result.length < 1)
         return res
