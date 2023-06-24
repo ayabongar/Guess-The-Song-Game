@@ -1,5 +1,6 @@
 import { createUser, getUserByUsername, getUserAndPasswordByUsername } from "../services/RepoService.js"
 import { authenticate, verify } from '../services/AuthService.js';
+import { hash, uniqueId } from "../services/CryptoService.js";
 
 export const register = async (req, res) => {
 
@@ -16,7 +17,9 @@ export const register = async (req, res) => {
             });
     }
 
-    const result = await createUser(username, password);
+    const userId = uniqueId();
+
+    const result = await createUser(userId, username, hash(password));
 
     return res
             .status(200)
@@ -29,9 +32,18 @@ export const login = async (req, res) => {
     const { username, password } = req.body;
 
     const result = await getUserAndPasswordByUsername(username);
+
+    if (result.length < 1)
+        return res
+            .status(401)
+            .json({
+                message: "Failed",
+                reason: "Invalid username or password"
+            });
+
     const matchUser = result[0];
 
-    const { status, message, reason } = authenticate(username, password, matchUser, res);
+    const { status, message, reason } = authenticate(username, hash(password), matchUser, res);
 
     return res
             .status(status)
@@ -41,19 +53,29 @@ export const login = async (req, res) => {
             })
 }
 
-export const authorize = (req, res) => {
+export const authorize = async (req, res) => {
 
-    if (!req.body.token)
+    if (!req.body.token || !req.body.user)
         return res
             .status(401)
             .json({
                 message: "Failed",
                 reason: "Verification not provided"
             });
-    
-    const user = verify(req.body.token);
 
-    if (user) {
+    const result = await getUserAndPasswordByUsername(req.body.user);
+
+    if (result.length < 1)
+        return res
+            .status(401)
+            .json({
+                message: "Failed",
+                reason: "Invalid username or password"
+            });
+    
+    const user = verify(result[0].user_id, req.body.token);
+
+    if (user == req.body.user) {
         return res
                 .status(200)
                 .json({

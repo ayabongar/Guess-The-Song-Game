@@ -3,16 +3,13 @@ import jsonwebtoken from 'jsonwebtoken';
 export const authenticate = (username, password, matchUser, res) => {
 
     if (username == matchUser.username && password == matchUser.hashed_password) {
-        res.cookie('token', jsonwebtoken.sign({ user: username }, process.env.JWT_SECRET, { expiresIn: process.env.JWT_EXPIRATION_TIME}), { httpOnly: true });
+        res.cookie('token', jsonwebtoken.sign({ user: username }, process.env.JWT_SECRET + matchUser.user_id, { expiresIn: process.env.JWT_EXPIRATION_TIME}), { httpOnly: true });
         return {
             status: 200,
             message: "Success",
             reason: "Authentication successfull"
         }
     }
-
-    console.log(username, password);
-    console.log(matchUser);
     
     return {
         status: 401,
@@ -21,13 +18,12 @@ export const authenticate = (username, password, matchUser, res) => {
     }
 }
 
-export const verify = (token) => {
+export const verify = (userId, token) => {
     try {
-        const { user } = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+        const { user } = jsonwebtoken.verify(token, process.env.JWT_SECRET + userId);
         return user;
     }
     catch (error) {
-        console.log(error)
         return undefined;
     }
 }

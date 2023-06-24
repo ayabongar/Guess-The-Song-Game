@@ -1,9 +1,10 @@
 import { execSQL } from "../repositories/GuessTheSongDB.js"
 
-export const createUser = async (username, password) => {
-    const sql = "INSERT INTO User (username, hashed_password) VALUES (:username, :hashed_password);";
+export const createUser = async (userId, username, password) => {
+    const sql = "INSERT INTO User (user_id, username, hashed_password) VALUES (:userId, :username, :hashed_password);";
 
     const parameters = {
+        userId: userId,
         username: username,
         hashed_password: password
     }
@@ -26,7 +27,7 @@ export const getUserByUsername = async (username) => {
 
 export const getUserAndPasswordByUsername = async (username) => {
 
-    const sql = "SELECT username, hashed_password FROM User WHERE username = :username LIMIT 1;";
+    const sql = "SELECT user_id, username, hashed_password FROM User WHERE username = :username LIMIT 1;";
 
     const parameters = {
         username: username
