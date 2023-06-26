@@ -5,8 +5,6 @@ exports.getPastScores = (req, res) => {
 
     connection.query(sql, req.query.userId, function (err, results) {
         if (err) throw err;
-
-        console.log(results);
         res.end(JSON.stringify(results));
     });
 }
@@ -51,6 +49,6 @@ exports.getScore = (req, res) => {
         }
     ];
 
-    res.end(JSON.stringify(result));
+    res.json(result);
 }
 
