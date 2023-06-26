@@ -178,23 +178,13 @@ exports.generateGameData = async () => {
 
 const generateRoundResult = (answer, round) => {
     try {
-        let message;
-        let result;
-
-        if (answer.title === round.title && answer.artist === round.artist) {
-            message = "CORRECT";
-            result = true;
-        } else {
-            message = "WRONG"
-            result = false;
-        }
+        const result = answer.title === round.title && answer.artist === round.artist;
 
         return {
             ok: true,
             status: StatusCodes.OK,
             data: {
-                message: message,
-                result: result
+                isCorrect: result
             }
         }
     } catch (err) {
@@ -209,16 +199,20 @@ const generateRoundResult = (answer, round) => {
     }
 }
 
-exports.processRoundAnswer = (gameId, answer) => {
+exports.processRoundAnswer = (body) => {
+    const gameId = body?.gameId;
+    const roundId = body?.roundId;
+    const answer = body?.answer;
+
     let errorMessage;
     let matchingRound;
 
-    if (!gameId || !answer || !answer.roundId || !answer.artist || !answer.title) {
+    if (!gameId || !answer || !roundId || !answer.artist || !answer.title) {
         return {
             ok: false,
             status: StatusCodes.BAD_REQUEST,
             data: {
-                message: 'Invalid game response. Please check the request you are submitting to this server',
+                message: 'Invalid game answer. Please check the request you are submitting to this server',
                 error: getReasonPhrase(StatusCodes.BAD_REQUEST)
             }
         };
