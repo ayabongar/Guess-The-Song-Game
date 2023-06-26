@@ -27,9 +27,9 @@ var config = {
 }
 
 
-mssql.connect(config, function(err) {
-    if (err) throw err;
-    console.log("Connected!");
-    });
+// mssql.connect(config, function(err) {
+//     if (err) throw err;
+//     console.log("Connected!");
+//     });
 
-module.exports = mssql;
+// module.exports = mssql;

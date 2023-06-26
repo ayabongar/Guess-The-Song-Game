@@ -30,3 +30,5 @@ replay_pid*
 .env.production.local
 .env.local
 *.zip
+
+node_modules/
