@@ -77,14 +77,18 @@ export const authorize = async (req, res) => {
                 reason: "Invalid username or password"
             });
     
-    const user = verify(result[0].user_id, req.body.token);
+    const { newToken, user } = verify(result[0].user_id, req.body.token);
 
     if (user == req.body.user) {
         return res
                 .status(200)
                 .json({
                     message: "Success",
-                    reason: "Successfully verified"
+                    reason: "Successfully verified",
+                    data: {
+                        token: newToken,
+                        user: user
+                    }
                 });
     }
 

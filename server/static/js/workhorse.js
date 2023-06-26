@@ -72,7 +72,9 @@ function getNextRound() {
     return (game.rounds.length > 0)? game.rounds.shift() : undefined;
 }
 
-function submitAnswer(roundID, optionNumber) {
+function submitAnswer(roundID, title, artist) {
+
+    //send gameID too
 
     const result = {
         isCorrect: true

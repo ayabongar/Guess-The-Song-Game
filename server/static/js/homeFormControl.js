@@ -61,7 +61,7 @@ function switchRound(roundID, lyrics, options) {
         const optionEl = document.createElement("button");
         optionEl.setAttribute("class", "gameOption");
         optionEl.innerText = options[i].title + " - " + options[i].artist;
-        optionEl.onclick = function() { submitAnswer(roundID, i); }
+        optionEl.onclick = function() { submitAnswer(roundID, options[i].title, options[i].artist); }
         containerEl.appendChild(optionEl);
     }
 
@@ -79,7 +79,7 @@ function switchScore() {
     const btnHome = document.createElement("button");
     btnHome.setAttribute("class", "homeButton");
     btnHome.innerText = "Home";
-    btnHome.onclick = switchMenu;
+    btnHome.onclick = goHome;
 
     mainEl.appendChild(containerEl);
 
@@ -142,7 +142,7 @@ function switchPastGames() {
     const btnHome = document.createElement("button");
     btnHome.setAttribute("class", "homeButton");
     btnHome.innerText = "Home";
-    btnHome.onclick = switchMenu;
+    btnHome.onclick = goHome;
 
     containerEl.appendChild(btnHome);
 }
@@ -161,4 +161,8 @@ function getCookie(cname) {
       }
     }
     return "";
-  }
+}
+
+function goHome() {
+    location.href = "/";
+}
