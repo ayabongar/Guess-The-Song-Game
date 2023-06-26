@@ -74,6 +74,8 @@ function getNextRound() {
 
 function submitAnswer(roundID, title, artist) {
 
+    //send gameID too
+
     const result = {
         isCorrect: true
     }
