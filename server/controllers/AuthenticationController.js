@@ -6,9 +6,8 @@ const verifyToken = async (user, token) => {
         return result;
     }
     catch (error) {
-        console.log("verification error");
-        console.log(error.response.data)
-        return error.response.data;
+        console.log(error);
+        return error.response;
     }
 }
 

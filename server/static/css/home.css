@@ -1,0 +1,29 @@
+body {
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+}
+
+#menuContainer {
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    width: 300px;
+    margin: auto;
+    margin-top: 20vh;
+    background-color: aqua;
+    border-radius: 20px;
+    background-color: aqua;
+}
+
+.menuButton {
+    background-color: transparent;
+    margin: 10px;
+    border-radius: 5px;
+    height: 25px;
+    width: 205px;
+    align-items: center;
+}
+
+.menuButton:hover {
+    cursor: pointer;
+}
