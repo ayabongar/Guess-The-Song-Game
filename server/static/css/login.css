@@ -32,6 +32,10 @@ button {
     align-items: center;
 }
 
+button:hover {
+    cursor: pointer;
+}
+
 .formMock {
     margin: 20px auto auto auto;
     width: 80%;
