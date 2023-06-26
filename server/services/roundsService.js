@@ -1,5 +1,5 @@
 const axios = require('axios');
-const { v4: uuidv4 } = require('uuid');
+const {v4: uuidv4} = require('uuid');
 const {
     StatusCodes,
     getReasonPhrase
@@ -7,9 +7,9 @@ const {
 const Billboard100 = require('./billboard-top-100');
 const Constants = require('../utils/constants');
 const Utils = require('../utils/utils.js');
+const {removeAnswersFromGame} = require("../utils/utils");
 
-let savedRoundId;
-let correctAnswer;
+const allGamesState = [];
 
 const getRandomDateString = () => {
     function randomValueBetween(min, max) {
@@ -76,7 +76,7 @@ const getRandomSongs = async () => {
     };
 };
 
-exports.getGameRoundData = async () => {
+const generateRoundData = async () => {
     let attempts = 0;
     let songs;
 
@@ -130,9 +130,6 @@ exports.getGameRoundData = async () => {
         };
     }
 
-    savedRoundId = uuidv4();
-    correctAnswer = selectedSong;
-
     const choices = songs.slice(0, 3)
 
     choices.push(selectedSong)
@@ -141,7 +138,8 @@ exports.getGameRoundData = async () => {
         ok: true,
         status: StatusCodes.OK,
         data: {
-            roundId: savedRoundId,
+            roundId: uuidv4(),
+            correctAnswer: selectedSong,
             options: choices.map(song => {
                 return {artist: song.artist, title: song.title, cover: song.cover}
             }),
@@ -150,23 +148,40 @@ exports.getGameRoundData = async () => {
     };
 };
 
-exports.getRoundResult = (roundId, answer) => {
-    if(!roundId || !answer || !answer.artist || !answer.title) {
+exports.generateGameData = async () => {
+    const newGame = {};
+    const rounds = [];
+
+    while (rounds.length < 5) {
+        const round = await generateRoundData();
+        rounds.push(round.data);
+    }
+
+    newGame.gameId = uuidv4();
+    newGame.rounds = rounds;
+
+    if (!newGame || !newGame.gameId || !newGame.rounds) {
+        throw 'Failed to generate game data';
+    } else {
+        allGamesState.push(newGame);
+
         return {
-            ok: false,
-            status: StatusCodes.BAD_REQUEST,
+            ok: true,
+            status: StatusCodes.OK,
             data: {
-                message: 'Invalid response. Please check the response you are submitting to this server',
-                err: getReasonPhrase(StatusCodes.BAD_REQUEST)
+                gameId: newGame.gameId,
+                rounds: removeAnswersFromGame(newGame.rounds)
             }
         };
     }
+};
 
+const generateRoundResult = (answer, round) => {
     try {
         let message;
         let result;
 
-        if(roundId === savedRoundId) {
+        if (answer.title === round.title && answer.artist === round.artist) {
             message = "CORRECT";
             result = true;
         } else {
@@ -176,19 +191,56 @@ exports.getRoundResult = (roundId, answer) => {
 
         return {
             ok: true,
-            status: 201,
+            status: StatusCodes.OK,
             data: {
                 message: message,
                 result: result
             }
         }
-    } catch(err) {
+    } catch (err) {
         return {
             ok: false,
             status: StatusCodes.BAD_REQUEST,
             data: {
                 message: 'Failed to process result',
                 err: err.message
+            }
+        }
+    }
+}
+
+exports.processRoundAnswer = (gameId, answer) => {
+    let errorMessage;
+    let matchingRound;
+
+    if (!gameId || !answer || !answer.roundId || !answer.artist || !answer.title) {
+        return {
+            ok: false,
+            status: StatusCodes.BAD_REQUEST,
+            data: {
+                message: 'Invalid game response. Please check the request you are submitting to this server',
+                error: getReasonPhrase(StatusCodes.BAD_REQUEST)
+            }
+        };
+    }
+
+    const matchingGame = allGamesState.find((game) => gameId === game.gameId);
+
+    if (!matchingGame) {
+                message = 'Invalid Game ID';
+    } else {
+        matchingRound = matchingGame.rounds.find((round) => answer.roundId === round.roundId);
+    }
+
+    if (!errorMessage) {
+        return generateRoundResult(answer, matchingRound);
+    } else {
+        return {
+            ok: false,
+            status: StatusCodes.NOT_FOUND,
+            data: {
+                message: errorMessage,
+                error: getReasonPhrase(StatusCodes.NOT_FOUND)
             }
         }
     }

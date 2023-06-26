@@ -11,3 +11,13 @@ exports.shuffleArray = (array) => {
 
     return array;
 };
+
+exports.removeAnswersFromGame = (rounds) => {
+    rounds.map((round) => {
+        delete round.correctAnswer;
+        return round;
+    });
+
+    return rounds;
+};
+
