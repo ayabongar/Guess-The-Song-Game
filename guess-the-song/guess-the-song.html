@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Guess the Song</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <header>
+        <h1>Guess the Song</h1>
+    </header>
+
+    <main>
+        <section>
+            <p>Lyrics to the song:</p>
+            <p id="lyrics">Lyrics</p>
+        </section>
+
+        <section>
+            <form id="guess-form">
+                <label for="guess">Choose your guess:</label>
+                <div id="song-options">
+                    <button type="button" class="song-option">Song 1</button>
+                    <button type="button" class="song-option">Song 2</button>
+                    <button type="button" class="song-option">Song 3</button>
+                    <button type="button" class="song-option">Song 4</button>
+                </div>
+                <input type="hidden" id="selected-song" name="selected-song" required>
+                <button type="submit">Submit</button>
+            </form>
+        </section>          
+
+        <section>
+            <h2>Result</h2>
+            <p id="result"></p>
+        </section>
+    </main>
+
+    <script src="manipulate-dom.js"></script>   
+</body>
+</html>
