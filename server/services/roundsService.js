@@ -10,6 +10,7 @@ const Utils = require('../utils/utils.js');
 const {removeAnswersFromGame} = require("../utils/utils");
 
 const allGamesState = [];
+let chart;
 
 const getRandomDateString = () => {
     function randomValueBetween(min, max) {
@@ -55,24 +56,32 @@ const getLyrics = async (artistName, songName) => {
 };
 
 const getRandomSongs = async () => {
-    const chart = await Billboard100.getChart('hot-100', getRandomDateString());
+    if(!chart || !chart.data?.songs?.length || chart.data.songs.length <= 10) {
+        chart = await Billboard100.getChart('hot-100', getRandomDateString());
+        Utils.shuffleArray(chart.data.songs)
+    }
 
     if (!chart.ok) {
-        console.log(`Error ${err.code} while getting random songs: ${err.message}`);
         return {
             ok: false,
-            status: err.code || 424,
+            status: StatusCodes.INTERNAL_SERVER_ERROR,
             data: {
                 message: 'Failed to get random billboard songs',
-                err: err.message
+                err: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR)
             }
         };
+    }
+
+    const chosenSongs = [];
+
+    while(chosenSongs.length < 10) {
+        chosenSongs.push(chart.data.songs.pop());
     }
 
     return {
         ok: true,
         status: StatusCodes.OK,
-        data: Utils.shuffleArray(chart?.data?.songs).slice(0, 10)
+        data: chosenSongs
     };
 };
 
@@ -153,8 +162,9 @@ exports.generateGameData = async () => {
     const rounds = [];
 
     while (rounds.length < 5) {
-        const round = await generateRoundData();
-        rounds.push(round.data);
+        const response = await generateRoundData();
+        if(response.ok)
+        rounds.push(response.data);
     }
 
     newGame.gameId = uuidv4();
@@ -170,8 +180,8 @@ exports.generateGameData = async () => {
             ok: true,
             status: StatusCodes.OK,
             data: {
-                gameId: newGame.gameId,
-                rounds: userGame
+                gameId: userGame.gameId,
+                rounds: userGame.rounds
             }
         };
     }
