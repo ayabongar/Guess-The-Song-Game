@@ -61,7 +61,7 @@ function switchRound(roundID, lyrics, options) {
         const optionEl = document.createElement("button");
         optionEl.setAttribute("class", "gameOption");
         optionEl.innerText = options[i].title + " - " + options[i].artist;
-        optionEl.onclick = function() { submitAnswer(roundID, i); }
+        optionEl.onclick = function() { submitAnswer(roundID, options[i].title, options[i].artist); }
         containerEl.appendChild(optionEl);
     }
 
