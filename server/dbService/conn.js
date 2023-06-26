@@ -1,31 +1,26 @@
 const mssql = require("mssql");
+const Constants = require('../utils/constants');
 require('dotenv').config();
 
 
-const DB_HOST = process.env.DB_HOST;
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DATABASE = process.env.DB_DATABASE;
-const DB_PORT = process.env.DB_PORT;
-
-var config = {
+let config = {
        
-    server: DB_HOST,
+    server: Constants.DB_HOST,
     authentication: {
         type: "default",
         options: {
-            userName: DB_USERNAME,
-            password: DB_PASSWORD
+            userName: Constants.DB_USERNAME,
+            password: Constants.DB_PASSWORD
         }
     },
     options: {
-        port: DB_PORT,
-        database: DB_DATABASE,
+        port: Constants.DB_PORT,
+        database: Constants.DB_DATABASE,
         encrypt: true,
         enableArithAbort: true
         }
 }
-
+console.log(JSON.stringify(config));
 
 mssql.connect(config, function(err) {
     if (err) throw err;

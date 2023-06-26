@@ -1,8 +1,8 @@
-import {checkRoundResponse, startNewRound} from "../controllers/roundsController.js";
+const userController = require("../controllers/userController");
+const scoreController = require("../controllers/scoreController");
+const roundsController = require("../controllers/roundsController.js");
 
-export const routes = (app) => {
-    const userController = require("../controllers/userController");
-    const scoreController = require("../controllers/scoreController");
+module.exports = (app) => {
 
     //parameters in the query
     app.get('/users', userController.findAll);
@@ -11,6 +11,6 @@ export const routes = (app) => {
     app.get('/score/user', scoreController.findByUserId);
     app.get('/score/updatePoints', scoreController.updateScore);
 
-    app.get('/play/new', startNewRound);
-    app.get('/play/:roundId', checkRoundResponse);
+    app.get('/play/new', roundsController.startNewRound);
+    app.get('/play/:roundId', roundsController.checkRoundResponse);
 }

@@ -1,12 +1,12 @@
-import axios from 'axios';
-import { v4 as uuidv4 } from 'uuid';
-import {
+const axios = require('axios');
+const { v4: uuidv4 } = require('uuid');
+const {
     StatusCodes,
     getReasonPhrase
-} from "http-status-codes";
-import {getChart} from './billboard-top-100.js';
-import constants from '../utils/constants.js';
-import {shuffleArray} from "../utils/utils.js";
+} = require('http-status-codes');
+const Billboard100 = require('./billboard-top-100');
+const Constants = require('../utils/constants');
+const Utils = require('../utils/utils.js');
 
 let savedRoundId;
 let correctAnswer;
@@ -29,12 +29,12 @@ const getLyrics = async (artistName, songName) => {
             callback: 'callback',
             q_artist: artistName,
             q_track: songName,
-            apikey: constants.LYRICS_API_KEY
+            apikey: Constants.LYRICS_API_KEY
         }
     };
 
     try {
-        const URL = constants.LYRICS_API_BASE_URL + constants.LYRIC_MATCHER;
+        const URL = Constants.LYRICS_API_BASE_URL + Constants.LYRIC_MATCHER;
         const response = await axios.get(URL, options);
 
         return {
@@ -55,7 +55,7 @@ const getLyrics = async (artistName, songName) => {
 };
 
 const getRandomSongs = async () => {
-    const chart = await getChart('hot-100', getRandomDateString());
+    const chart = await Billboard100.getChart('hot-100', getRandomDateString());
 
     if (!chart.ok) {
         console.log(`Error ${err.code} while getting random songs: ${err.message}`);
@@ -72,11 +72,11 @@ const getRandomSongs = async () => {
     return {
         ok: true,
         status: StatusCodes.OK,
-        data: shuffleArray(chart?.data?.songs).slice(0, 10)
+        data: Utils.shuffleArray(chart?.data?.songs).slice(0, 10)
     };
 };
 
-export const getGameRoundData = async () => {
+exports.getGameRoundData = async () => {
     let attempts = 0;
     let songs;
 
@@ -150,7 +150,7 @@ export const getGameRoundData = async () => {
     };
 };
 
-export const getRoundResult = (roundId, answer) => {
+exports.getRoundResult = (roundId, answer) => {
     if(!roundId || !answer || !answer.artist || !answer.title) {
         return {
             ok: false,

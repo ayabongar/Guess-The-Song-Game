@@ -1,14 +1,14 @@
-import { getGameRoundData, getRoundResult } from "../services/songService.js";
+const roundsService = require("../services/roundsService");
 
-export const startNewRound = async (req, res) => {
-    const roundData = await getGameRoundData();
+exports.startNewRound = async (req, res) => {
+    const roundData = await roundsService.getGameRoundData();
 
     res.status(roundData.status);
     res.json(roundData);
 };
 
-export const checkRoundResponse = async (req, res) => {
-    const result = await getRoundResult(req.params.roundId, req.body);
+exports.checkRoundResponse = async (req, res) => {
+    const result = await roundsService.getRoundResult(req.params.roundId, req.body);
 
     res.status(result.status);
     res.json(result);
