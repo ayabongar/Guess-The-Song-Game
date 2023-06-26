@@ -17,6 +17,11 @@ const verifyRequest = async (req, res, next) => {
         try{
             const verificationResult = await authenticationController.verifyToken(req.cookies.user, req.cookies.token);
             if (verificationResult.data.message == "Success") {
+                console.log(verificationResult.data);
+                console.log(req.cookies.token);
+                console.log(verificationResult.data.data.token);
+                res.cookie("token", verificationResult.data.data.token);
+                res.cookie("user", verificationResult.data.data.user);
                 next();
             }
             else {
@@ -25,8 +30,7 @@ const verifyRequest = async (req, res, next) => {
             }
         }
         catch (error) {
-            
-            console.log(verificationResult);
+            console.log(error);
         }
     }
 }

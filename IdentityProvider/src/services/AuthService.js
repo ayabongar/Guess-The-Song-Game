@@ -38,9 +38,14 @@ export const authenticate = (username, password, matchUser, res) => {
 export const verify = (userId, token) => {
     try {
         const { user } = jsonwebtoken.verify(token, process.env.JWT_SECRET + userId);
-        return user;
+        const newToken =  jsonwebtoken.sign({ user: user }, process.env.JWT_SECRET + userId, { expiresIn: process.env.JWT_EXPIRATION_TIME});
+
+        console.log(token);
+        console.log(newToken);
+
+        return { newToken, user };
     }
     catch (error) {
-        return undefined;
+        return { undefined, undefined };
     }
 }

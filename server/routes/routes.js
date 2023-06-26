@@ -1,16 +1,16 @@
-const userController = require("../controllers/userController");
-const scoreController = require("../controllers/scoreController");
-const roundsController = require("../controllers/roundsController.js");
-
 module.exports = (app) => {
+    const staticResourceController = require("../controllers/StaticResourceController");
+    const userController = require("../controllers/userController");
+    const gameController = require("../controllers/GameController");
 
-    //parameters in the query
-    app.get('/users', userController.findAll);
-    app.get('/scores/create', scoreController.createScore);
-    app.get('/scores', scoreController.findAll);
-    app.get('/score/user', scoreController.findByUserId);
-    app.get('/score/updatePoints', scoreController.updateScore);
+    //Game
+    app.get("/past-scores", userController.getPastScores);
+    app.get("/score", userController.getScore);
 
-    app.get('/play/new', roundsController.startNewRound);
-    app.get('/play/:roundId', roundsController.checkRoundResponse);
+    app.get("/getGame", gameController.createGame);
+    app.post("/submit", gameController.submitAnswer);
+
+    /* Pages */
+    app.get("/", staticResourceController.getHomePage);
+    app.get("/authenticate", staticResourceController.getAuthPage);
 }

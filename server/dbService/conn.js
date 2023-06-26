@@ -1,35 +1,20 @@
-const mssql = require("mssql");
+const mysql = require('mysql2');
 require('dotenv').config();
 
+const connection = mysql.createConnection({
+    host: process.env.DB_ENDPOINT,
+    user: process.env.DB_USERNAME,
+    password: process.env.DB_PASSWORD,
+    database: "GuessTheSong",
+    port: 3306,
+    namedPlaceholders: true
+});
 
-const DB_HOST = process.env.DB_HOST;
-const DB_USERNAME = process.env.DB_USERNAME;
-const DB_PASSWORD = process.env.DB_PASSWORD;
-const DB_DATABASE = process.env.DB_DATABASE;
-const DB_PORT = process.env.DB_PORT;
+connection.connect((err) => {
+    if(err){
+        throw err;
+    }
+    console.log("MySQL Connected");
+});
 
-var config = {
-       
-    server: DB_HOST,
-    authentication: {
-        type: "default",
-        options: {
-            userName: DB_USERNAME,
-            password: DB_PASSWORD
-        }
-    },
-    options: {
-        port: DB_PORT,
-        database: DB_DATABASE,
-        encrypt: true,
-        enableArithAbort: true
-        }
-}
-
-
-// mssql.connect(config, function(err) {
-//     if (err) throw err;
-//     console.log("Connected!");
-//     });
-
-// module.exports = mssql;
+module.exports = connection;

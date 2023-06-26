@@ -1,3 +1,5 @@
+const mainUrl = "http://localhost:8080";
+
 let game = { }
 
 function logoutExecute() {
@@ -72,7 +74,9 @@ function getNextRound() {
     return (game.rounds.length > 0)? game.rounds.shift() : undefined;
 }
 
-function submitAnswer(roundID, optionNumber) {
+async function submitAnswer(roundID, title, artist) {
+
+    //send gameID too
 
     const result = {
         isCorrect: true
@@ -81,54 +85,39 @@ function submitAnswer(roundID, optionNumber) {
     const nextRound = getNextRound();
 
     if (nextRound == undefined) {
-        switchScore();
+        await switchScore();
         return;
     }
 
-    switchRound(nextRound.roundID, nextRound.lyrics, nextRound.options);
+    await switchRound(nextRound.roundID, nextRound.lyrics, nextRound.options);
 }
 
-function getScore() {
-    const result = [
-        {
-            roundID: "1",
-            lyrics: "Baby, bay, baby.. ohhh",
-            yourAnswer: {
-                artist: "Justin Bieber",
-                title: "Baby"
-            },
-            isCorrect: true
-        },
-        {
-            roundID: "2",
-            lyrics: "'Got so much wood I can build me a fort",
-            yourAnswer: {
-                artist: "Bob",
-                title: "FML"
-            },
-            isCorrect: false
-        }
-    ]
+async function getScore() {
 
-    return result;
-}
-
-function getPastGames() {
-    const result = {
-        rating: 50,
-        games: [
-            {
-                date: "22/07/2023",
-                score: 5,
-                total : 10
-            },
-            {
-                date: "22/20/2023",
-                score: 3,
-                total : 6
-            }
-        ]
+    let config = {
+        withCredentials: true
     }
 
-    return result;
+    const result = await axios.get(
+        mainUrl + "/score",
+        config
+    );
+
+    return result.data;
+}
+
+async function getPastGames() {
+
+    let config = {
+        withCredentials: true
+    }
+
+    const result = await axios.get(
+        mainUrl + "/past-scores?userId=" + document.cookie.username,
+        config
+    );
+
+    console.log(result);
+
+    return result.data;
 }
