@@ -4,7 +4,7 @@ const {
     getReasonPhrase,
 } = require('http-status-codes');
 
-exports.startNewGame = async (req, res) => {
+exports.createGame = async (req, res) => {
     let result;
 
     try {
@@ -40,8 +40,8 @@ exports.startNewGame = async (req, res) => {
     res.json(result.data);
 };
 
-exports.checkRoundResponse = async (req, res) => {
-    const result = await roundsService.processRoundAnswer(req.params.gameId, req.body);
+exports.submitAnswer = async (req, res) => {
+    const result = await roundsService.processRoundAnswer(req.body);
 
     res.status(result.status);
     res.json(result.data);

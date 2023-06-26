@@ -12,12 +12,13 @@ exports.shuffleArray = (array) => {
     return array;
 };
 
-exports.removeAnswersFromGame = (rounds) => {
-    rounds.map((round) => {
+exports.removeAnswersFromGame = (gameData) => {
+    const newObj = JSON.parse(JSON.stringify(gameData));
+    newObj.rounds.map((round) => {
         delete round.correctAnswer;
         return round;
     });
 
-    return rounds;
+    return newObj;
 };
 

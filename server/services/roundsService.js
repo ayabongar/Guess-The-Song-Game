@@ -164,13 +164,14 @@ exports.generateGameData = async () => {
         throw 'Failed to generate game data';
     } else {
         allGamesState.push(newGame);
+        const userGame = removeAnswersFromGame(newGame);
 
         return {
             ok: true,
             status: StatusCodes.OK,
             data: {
                 gameId: newGame.gameId,
-                rounds: removeAnswersFromGame(newGame.rounds)
+                rounds: userGame
             }
         };
     }
@@ -178,7 +179,7 @@ exports.generateGameData = async () => {
 
 const generateRoundResult = (answer, round) => {
     try {
-        const result = answer.title === round.title && answer.artist === round.artist;
+        const result = answer.title === round.correctAnswer.title && answer.artist === round.correctAnswer.artist;
 
         return {
             ok: true,
@@ -221,9 +222,13 @@ exports.processRoundAnswer = (body) => {
     const matchingGame = allGamesState.find((game) => gameId === game.gameId);
 
     if (!matchingGame) {
-                message = 'Invalid Game ID';
+        errorMessage = 'Invalid Game ID';
     } else {
-        matchingRound = matchingGame.rounds.find((round) => answer.roundId === round.roundId);
+        matchingRound = matchingGame.rounds.find((round) => roundId === round.roundId);
+
+        if(!matchingRound) {
+            errorMessage = 'Invalid Round ID';
+        }
     }
 
     if (!errorMessage) {
