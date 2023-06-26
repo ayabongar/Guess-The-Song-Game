@@ -45,13 +45,14 @@ export const login = async (req, res) => {
 
     const matchUser = result[0];
 
-    const { status, message, reason } = authenticate(username, hash(password), matchUser, res);
+    const { status, message, reason, data } = authenticate(username, hash(password), matchUser, res);
 
     return res
             .status(status)
             .json({
                 message: message,
-                reason: reason
+                reason: reason,
+                data: data
             })
 }
 
