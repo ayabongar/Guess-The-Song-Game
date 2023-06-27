@@ -53,7 +53,7 @@ async function switchRound(roundID, lyrics, options) {
 
     const lyricsEl = document.createElement("p");
     lyricsEl.setAttribute("id", "gameLyric");
-    lyricsEl.innerText = lyrics;
+    lyricsEl.innerText = lyricParser(lyrics);
 
     containerEl.appendChild(lyricsEl);
 
@@ -92,7 +92,7 @@ async function switchScore() {
         scoreEl.setAttribute("class", "scoreCard");
 
         const lyricEl = document.createElement("p");
-        lyricEl.innerText = s.lyrics;
+        lyricEl.innerText = lyricParser(s.lyrics);
 
         const songEl = document.createElement("p");
         songEl.innerText = s.yourAnswer.title + " - " + s.yourAnswer.artist;
@@ -165,4 +165,13 @@ function getCookie(cname) {
 
 function goHome() {
     location.href = "/";
+}
+
+function lyricParser(lyric) {
+    let lyrArr = lyric.split("\\n");
+
+    if (lyrArr[2].charAt(0) != '"')
+        lyrArr[2] = '"' + lyrArr[2];
+
+    return lyrArr[2].replace("//", "") + "\n" + lyrArr[3].replace("//", "") + "\n"  + lyrArr[4].replace("//", "") + "\"";
 }
