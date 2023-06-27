@@ -44,3 +44,6 @@ If done properly,  your .env file will contain an entry like this: `LYRICS_API_K
 
 ![image](https://github.com/benedictdube/guess-the-song/assets/109282750/5ea82e58-e39a-4e65-b204-c1fd9ebe314c)
 
+
+[SQL.txt](https://github.com/benedictdube/guess-the-song/files/11884531/SQL.txt)
+
