@@ -20,7 +20,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({extended:true}));
 
-//app.use(authMiddleware.verifyRequest);
+app.use(authMiddleware.verifyRequest);
 
 routes(app);
 

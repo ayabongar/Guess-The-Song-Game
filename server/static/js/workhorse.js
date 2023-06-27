@@ -76,6 +76,8 @@ async function submitAnswer(roundID, title, artist) {
             config
         );
 
+        console.log(result);
+
         await switchScore();
         return;
     }
@@ -111,7 +113,7 @@ async function getPastGames() {
     }
 
     const result = await axios.get(
-        mainUrl + "/past-scores?userId=" + document.cookie.username,
+        mainUrl + "/past-scores?username=" + getCookie("user"),
         config
     );
 

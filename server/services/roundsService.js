@@ -291,3 +291,21 @@ exports.getScore = (gameId) => {
         return resp;
     }
 }
+
+exports.getGameScore = (gameId) => {
+    
+    const matchingGame = allGamesState.find((game) => gameId === game.gameId);
+
+    let score = 0;
+    let amount = 0;
+
+    matchingGame.rounds.forEach(r => {
+        if (r.isCorrect) score++;
+        amount++;
+    });
+
+    return {
+        score: score,
+        amount: amount
+    }
+}

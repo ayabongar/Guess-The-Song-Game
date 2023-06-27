@@ -134,7 +134,7 @@ async function switchPastGames() {
     if (pastGames.games != undefined) pastGames.games.forEach(g => {
         const pg = document.createElement("p");
         pg.setAttribute("class", "pgItem");
-        pg.innerText = g.date + ": " + g.score + "/" + g.total;
+        pg.innerText = g.date + ": " + g.score + "/" + g.overall_result;
 
         listContainerEl.appendChild(pg);
     });
