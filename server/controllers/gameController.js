@@ -46,3 +46,10 @@ exports.submitAnswer = async (req, res) => {
     res.status(result.status);
     res.json(result.data);
 };
+
+exports.getScore = async (req, res) => {
+
+    const result = roundsService.getScore(req.body.gameId);
+    res.status(200);
+    res.json(result);
+}

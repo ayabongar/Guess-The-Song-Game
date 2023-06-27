@@ -152,6 +152,7 @@ const generateRoundData = async () => {
             options: choices.map(song => {
                 return {artist: song.artist, title: song.title, cover: song.cover}
             }),
+            isCorrect: false,
             lyrics: lyrics
         }
     };
@@ -187,9 +188,17 @@ exports.generateGameData = async () => {
     }
 };
 
-const generateRoundResult = (answer, round) => {
+const generateRoundResult = (answer, round, gameId) => {
     try {
         const result = answer.title === round.correctAnswer.title && answer.artist === round.correctAnswer.artist;
+        
+        console.log(answer);
+        console.log(round.correctAnswer);
+
+        if (result) {
+            const matchingGame = allGamesState.find((game) => gameId === game.gameId);
+            matchingGame.rounds.find((r) => r.roundId === round.roundId).isCorrect = true;
+        }
 
         return {
             ok: true,
@@ -242,7 +251,7 @@ exports.processRoundAnswer = (body) => {
     }
 
     if (!errorMessage) {
-        return generateRoundResult(answer, matchingRound);
+        return generateRoundResult(answer, matchingRound, gameId);
     } else {
         return {
             ok: false,
@@ -254,3 +263,31 @@ exports.processRoundAnswer = (body) => {
         }
     }
 };
+
+exports.getScore = (gameId) => {
+
+    const matchingGame = allGamesState.find((game) => gameId === game.gameId);
+    let errorMessage;
+
+    if (!matchingGame) {
+        errorMessage = 'Invalid Game ID';
+    } else {
+
+        let resp = [];
+
+        matchingGame.rounds.forEach(r => {
+
+            let round = {}
+
+            round = {
+                lyrics: r.lyrics,
+                yourAnswer: r.correctAnswer,
+                isCorrect: r.isCorrect
+            }
+
+            resp.push(round);
+        });
+
+        return resp;
+    }
+}
