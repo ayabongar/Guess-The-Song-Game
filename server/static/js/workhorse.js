@@ -64,6 +64,18 @@ async function submitAnswer(roundID, title, artist) {
     const nextRound = getNextRound();
 
     if (nextRound == undefined) {
+
+        data = {
+            gameId: game.gameId,
+            username: getCookie("user")
+        }
+
+        const result = await axios.post(
+            mainUrl + "/add-score",
+            data,
+            config
+        );
+
         await switchScore();
         return;
     }
@@ -102,8 +114,6 @@ async function getPastGames() {
         mainUrl + "/past-scores?userId=" + document.cookie.username,
         config
     );
-
-    console.log(result);
 
     return result.data;
 }
