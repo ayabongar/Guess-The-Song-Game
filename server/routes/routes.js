@@ -6,7 +6,7 @@ module.exports = (app) => {
     //Game
     app.get("/past-scores", userController.getPastScores);
     app.get("/score", userController.getScore);
-    app.post("/add-score", userController.insertScore)
+    app.post("/add-score", userController.insertScore);
 
     app.get("/getGame", gameController.createGame);
     app.post("/submit", gameController.submitAnswer);
