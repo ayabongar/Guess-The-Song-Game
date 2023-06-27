@@ -31,8 +31,8 @@ exports.insertScore = (req, res) => {
     let {score, amount} = roundsService.getGameScore(req.body.gameId);
     let date = Date.now();
 
-    const parameters = [gameId, username, score, amount, date];
-    let sql = "INSERT INTO Game (game_id, username, score, overall_result, date) VALUES (?,?,?,?,?)";
+    const parameters = [gameId, username, score, amount,];
+    let sql = "INSERT INTO Game (game_id, username, score, overall_result, date) VALUES (?,?,?,?,CURDATE())";
 
     connection.query(sql, parameters, function (err, results) {
         if (err) throw err;

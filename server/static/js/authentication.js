@@ -25,6 +25,9 @@ async function login(username, password) {
         document.cookie = "user=" + authResult.data.data.username;
         location.href = "/";
     }
+    else {
+        window.alert(authResult.data.message + ": " + authResult.data.reason);
+    }
 }
 
 async function register(username, password1, password2) {
@@ -48,6 +51,9 @@ async function register(username, password1, password2) {
 
     if (authResult.data.message == "Success") {
         switchToLogin();
+    }
+    else {
+        window.alert(authResult.data.message + ": " + authResult.data.reason);
     }
 }
 

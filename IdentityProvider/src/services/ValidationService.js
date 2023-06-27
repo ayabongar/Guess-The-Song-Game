@@ -18,5 +18,6 @@ export const validatePassword = (password1, password2) => {
     if (password1.length < 10)
         return false;
     
-    return true;
+    var reg = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+    return reg.test(password1);
 }

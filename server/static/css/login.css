@@ -49,3 +49,12 @@ a {
 a:hover {
     cursor: pointer;
 }
+
+.authBtn {
+    margin-top: 150px;
+}
+
+.regBtn {
+    
+    margin-top: 50px;
+}

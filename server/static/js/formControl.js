@@ -22,6 +22,7 @@ function switchToLogin() {
 
     const loginButtonEl = document.createElement("button");
     loginButtonEl.setAttribute("onclick", "loginExecute()");
+    loginButtonEl.setAttribute("class", "authBtn");
     loginButtonEl.innerText = "Login";
 
     const unLbl = document.createElement("p");
@@ -74,6 +75,7 @@ function switchToRegister() {
     const loginButtonEl = document.createElement("button");
     loginButtonEl.setAttribute("onclick", "registerExecute()");
     loginButtonEl.innerText = "Register";
+    loginButtonEl.setAttribute("class", "regBtn");
 
     form.appendChild(unLbl);
     form.appendChild(inputUsernameEl);

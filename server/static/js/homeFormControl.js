@@ -18,6 +18,7 @@ function switchMenu(){
 
     const btnLogoutEl = document.createElement("button");
     btnLogoutEl.setAttribute("class", "menuButton");
+    btnLogoutEl.setAttribute("style", "margin-top: 100px; margin-bottom: 50px;");
     btnLogoutEl.innerText = "Logout";
     btnLogoutEl.onclick = logoutExecute;
 
@@ -32,10 +33,13 @@ async function switchPlay() {
     console.log("switch play");
 
     const mainEl = document.getElementById("mainEl");
-    mainEl.innerHTML = "loading game...";
+    mainEl.innerHTML = "";
 
     const containerEl = document.createElement("div");
     containerEl.setAttribute("id", "roundContainer");
+    const loader = document.createElement("div");
+    loader.setAttribute("class", "loader rotating");
+    containerEl.appendChild(loader);
 
     mainEl.appendChild(containerEl);
 
@@ -89,14 +93,14 @@ async function switchScore() {
 
     score.forEach(s => {
         const scoreEl = document.createElement("div");
-        scoreEl.setAttribute("class", "scoreCard");
+        scoreEl.setAttribute("class", "scoreCard " + ((s.isCorrect)? "scoreCorrect" : "scoreWrong"));
 
         const lyricEl = document.createElement("p");
         lyricEl.innerText = lyricParser(s.lyrics);
 
         const songEl = document.createElement("p");
         songEl.innerText = s.yourAnswer.title + " - " + s.yourAnswer.artist;
-        songEl.setAttribute("class", (s.isCorrect)? "scoreCorrect" : "scoreWrong");
+        songEl.setAttribute("class", "scoreCorrect");
 
         scoreEl.appendChild(lyricEl);
         scoreEl.appendChild(songEl);
@@ -120,6 +124,7 @@ async function switchPastGames() {
     const user = getCookie("user");
 
     const ratingEl = document.createElement("p");
+    ratingEl.setAttribute("class", "ratingHeading");
     ratingEl.innerText = user + ": " + ((pastGames.rating == undefined)? "0" : pastGames.rating);
 
     containerEl.appendChild(ratingEl);
@@ -134,7 +139,7 @@ async function switchPastGames() {
     if (pastGames.games != undefined) pastGames.games.forEach(g => {
         const pg = document.createElement("p");
         pg.setAttribute("class", "pgItem");
-        pg.innerText = g.date + ": " + g.score + "/" + g.overall_result;
+        pg.innerText = g.date.substring(0, g.date.indexOf("T")) + ": " + g.score + "/" + g.overall_result;
 
         listContainerEl.appendChild(pg);
     });
@@ -170,8 +175,27 @@ function goHome() {
 function lyricParser(lyric) {
     let lyrArr = lyric.split("\\n");
 
-    if (lyrArr[2].charAt(0) != '"')
-        lyrArr[2] = '"' + lyrArr[2];
+    let finalLyric = "";
 
-    return lyrArr[2].replace("//", "") + "\n" + lyrArr[3].replace("//", "") + "\n"  + lyrArr[4].replace("//", "") + "\"";
+    if (lyrArr[2]) {
+        if (lyrArr[2].charAt(0) == '"')
+            lyrArr[2] = lyrArr[2].substring(1, lyrArr[2].length);
+        
+        finalLyric += lyrArr[2] + " ";
+    }
+
+    if (lyrArr[3]) {
+        finalLyric += lyrArr[3] + " ";
+    }
+
+    if (lyrArr[4]) {
+        if (lyrArr[4].charAt(0) == '"')
+            lyrArr[4] = lyrArr[4].substring(1, lyrArr[4].length);
+        
+        finalLyric += lyrArr[4];
+    }
+
+    finalLyric = finalLyric.replace("\\", "").replace("\/", "");
+
+    return finalLyric;
 }
