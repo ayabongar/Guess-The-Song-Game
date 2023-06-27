@@ -1,5 +1,5 @@
-//const mainUrl = "https://i7vwspeb2s.us-east-1.awsapprunner.com";
-const mainUrl = "http://localhost:8080";
+const mainUrl = "https://i7vwspeb2s.us-east-1.awsapprunner.com";
+//const mainUrl = "http://localhost:8080";
 
 let game = { }
 

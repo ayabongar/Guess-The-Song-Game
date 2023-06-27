@@ -1,5 +1,5 @@
-//const identityProviderUrl = "https://aqri6bnma6.us-east-1.awsapprunner.com";
-const identityProviderUrl = "http://localhost:8081";
+const identityProviderUrl = "https://aqri6bnma6.us-east-1.awsapprunner.com";
+//const identityProviderUrl = "http://localhost:8081";
 
 async function login(username, password) {
     
