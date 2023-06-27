@@ -1,5 +1,5 @@
-const identityProviderUrl = "https://aqri6bnma6.us-east-1.awsapprunner.com";
-//const identityProviderUrl = "http://localhost:8081";
+//const identityProviderUrl = "https://aqri6bnma6.us-east-1.awsapprunner.com";
+const identityProviderUrl = "http://localhost:8081";
 
 async function login(username, password) {
     
@@ -18,10 +18,11 @@ async function login(username, password) {
         config
     );
 
-    document.cookie = "token=" + authResult.data.data.token;
-    document.cookie = "user=" + authResult.data.data.username;
+    console.log(authResult);
 
     if (authResult.data.message == "Success") {
+        document.cookie = "token=" + authResult.data.data.token;
+        document.cookie = "user=" + authResult.data.data.username;
         location.href = "/";
     }
 }
@@ -42,6 +43,8 @@ async function register(username, password1, password2) {
         data,
         config
     );
+
+    console.log(authResult.data)
 
     if (authResult.data.message == "Success") {
         switchToLogin();

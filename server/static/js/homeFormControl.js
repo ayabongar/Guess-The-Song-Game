@@ -32,7 +32,7 @@ async function switchPlay() {
     console.log("switch play");
 
     const mainEl = document.getElementById("mainEl");
-    mainEl.innerHTML = "";
+    mainEl.innerHTML = "loading game...";
 
     const containerEl = document.createElement("div");
     containerEl.setAttribute("id", "roundContainer");
