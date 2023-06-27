@@ -3,6 +3,7 @@ const {
     StatusCodes,
     getReasonPhrase,
 } = require('http-status-codes');
+const e = require("express");
 
 exports.createGame = async (req, res) => {
     let result;
@@ -11,8 +12,8 @@ exports.createGame = async (req, res) => {
         result = await roundsService.generateGameData();
 
         if(!result) {
-            throw 'Failed to generate game data';
-        } else if(!result.ok) {
+            throw new Error('Failed to generate game data');
+        } else if(!result.ok && !result.data.stackTrace) {
             res.status(StatusCodes.SERVICE_UNAVAILABLE);
             res.json({
                 ok: false,
@@ -22,6 +23,12 @@ exports.createGame = async (req, res) => {
                     message: err.message || getReasonPhrase(StatusCodes.SERVICE_UNAVAILABLE)
                 }
             });
+            return;
+        } else if(!result.ok) {
+            res.status(result.status || StatusCodes.INTERNAL_SERVER_ERROR);
+            delete result.status;
+            res.json(result);
+            return;
         }
     } catch(err) {
         res.status(StatusCodes.INTERNAL_SERVER_ERROR);
@@ -30,7 +37,9 @@ exports.createGame = async (req, res) => {
             message: 'Server error while generating new game',
             error: {
                 code: err.code || StatusCodes.INTERNAL_SERVER_ERROR,
-                message: err.message || getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR)
+                message: err.message || getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR),
+                stackTrace: err.stack,
+                caughtIn: 'GameController::createGame()'
             }
         });
         return;

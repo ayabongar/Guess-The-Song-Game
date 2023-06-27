@@ -2,6 +2,7 @@ const { load } = require('cheerio');
 const Moment = require('moment');
 const Axios = require('axios');
 const Constants = require('../utils/constants.js');
+const {StatusCodes} = require("http-status-codes");
 
 exports.getChart = async (name, date) => {
   let chartName = name;
@@ -11,8 +12,22 @@ exports.getChart = async (name, date) => {
   chart.songs = [];
 
   const requestURL = `${Constants.BILLBOARD_BASE_URL}${Constants.BILLBOARD_CHARTS_URL}${chartName}/${chartDate}`;
-  const { data } = await Axios.get(requestURL, { responseType: 'document' });
+  const { data } = await Axios.get(requestURL).catch((error) => {
+    return {
+      ok: false,
+      status: error.code || StatusCodes.INTERNAL_SERVER_ERROR,
+      data: {
+        message: 'Songs not found.',
+        error: error.message,
+        stackTrace: error.stack,
+        caughtIn: 'Billboard-top-100::getChart'
+      }
+    };
+  });
 
+  if(!!(data.error || data.stackTrace)) {
+    return data;
+  }
   const $ = load(data);
 
   let d;

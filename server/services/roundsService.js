@@ -35,13 +35,23 @@ const getLyrics = async (artistName, songName) => {
     };
 
     try {
+        if(!options.params.apikey) {
+            const error = new Error('missing lyrics API key');
+            error.code(StatusCodes.INTERNAL_SERVER_ERROR);
+
+            throw error;
+        }
+
         const URL = Constants.LYRICS_API_BASE_URL + Constants.LYRIC_MATCHER;
         const response = await axios.get(URL, options);
+
+        const lyricsResponse = JSON.stringify(response.data.message.body?.lyrics?.lyrics_body);
+        const lyrics = lyricsResponse.split('\\n').filter(s => s).slice(0, 3).join('<br />');
 
         return {
             ok: response.data.message?.header?.status_code === 200,
             status: response.data.message?.header?.status_code || response.status,
-            data: JSON.stringify(response.data.message.body?.lyrics?.lyrics_body)
+            data: lyrics
         };
     } catch (err) {
         return {
@@ -49,7 +59,9 @@ const getLyrics = async (artistName, songName) => {
             status: err instanceof TypeError ? 400 : err.code,
             data: {
                 message: 'Failed to get lyrics',
-                err: err
+                err: err,
+                stackTrace: err.stack,
+                caughtIn: 'RoundsService::getLyrics'
             }
         };
     }
@@ -58,10 +70,12 @@ const getLyrics = async (artistName, songName) => {
 const getRandomSongs = async () => {
     if(!chart || !chart.data?.songs?.length || chart.data.songs.length <= 10) {
         chart = await Billboard100.getChart('hot-100', getRandomDateString());
-        Utils.shuffleArray(chart.data.songs)
+        if(chart.ok) {
+            Utils.shuffleArray(chart.data.songs);
+        }
     }
 
-    if (!chart.ok) {
+    if (!chart.ok && !chart?.stackTrace) {
         return {
             ok: false,
             status: StatusCodes.INTERNAL_SERVER_ERROR,
@@ -70,11 +84,13 @@ const getRandomSongs = async () => {
                 err: getReasonPhrase(StatusCodes.INTERNAL_SERVER_ERROR)
             }
         };
+    } else if (!chart.ok) {
+        return chart;
     }
 
     const chosenSongs = [];
 
-    while(chosenSongs.length < 10) {
+    while (chosenSongs.length < 10) {
         chosenSongs.push(chart.data.songs.pop());
     }
 
@@ -95,6 +111,12 @@ const generateRoundData = async () => {
         if (songsResponse.ok) {
             songs = songsResponse.data;
             break;
+        } else if (!(!songsResponse.stackTrace || !songsResponse.caughtIn)) {
+            return {
+                ok: false,
+                status: StatusCodes.INTERNAL_SERVER_ERROR,
+                data: songsResponse
+            }
         }
 
         attempts++;
@@ -126,6 +148,8 @@ const generateRoundData = async () => {
 
             break;
         }
+
+        attempts++;
     }
 
     if (!lyrics) {
@@ -161,17 +185,24 @@ const generateRoundData = async () => {
 exports.generateGameData = async () => {
     const newGame = {};
     const rounds = [];
+    let attempts = 0;
 
-    while (rounds.length < 5) {
+    while (rounds.length < 5 && attempts < 2) {
         const response = await generateRoundData();
-        if(response.ok)
-        rounds.push(response.data);
+        if(response.ok) {
+            rounds.push(response.data);
+        }
+        else if(!(response.ok && !response.stackTrace)) {
+            return response;
+        } else {
+            attempts++;
+        }
     }
 
     newGame.gameId = uuidv4();
     newGame.rounds = rounds;
 
-    if (!newGame || !newGame.gameId || !newGame.rounds) {
+    if (!newGame || !newGame.gameId || !newGame.rounds || newGame.rounds.length < 4) {
         throw 'Failed to generate game data';
     } else {
         allGamesState.push(newGame);
@@ -213,11 +244,13 @@ const generateRoundResult = (answer, round, gameId) => {
             status: StatusCodes.BAD_REQUEST,
             data: {
                 message: 'Failed to process result',
-                err: err.message
+                err: err.message,
+                stackTrace: err.stack,
+                caughtIn: 'RoundsService::generateRoundResult'
             }
         }
     }
-}
+};
 
 exports.processRoundAnswer = (body) => {
     const gameId = body?.gameId;
