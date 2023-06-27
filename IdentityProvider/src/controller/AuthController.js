@@ -1,10 +1,20 @@
 import { createUser, getUserByUsername, getUserAndPasswordByUsername } from "../services/RepoService.js"
 import { authenticate, verify } from '../services/AuthService.js';
 import { hash, uniqueId } from "../services/CryptoService.js";
+import { validateUsername, validatePassword } from "../services/ValidationService.js";
 
 export const register = async (req, res) => {
 
-    const { username, password } = req.body;
+    const { username, password1 } = req.body;
+
+    if (!validateUsername(req.body.username) || !validatePassword(req.body.password1, req.body.password2)) {
+        return res
+            .status(200)
+            .json({ 
+                message: "Failed",
+                reason: "Username or password invalid."
+            });
+    }
 
     let existingUser = await getUserByUsername(username);
     existingUser = existingUser[0];
@@ -20,7 +30,7 @@ export const register = async (req, res) => {
 
     const userId = uniqueId();
 
-    const result = await createUser(userId, username, hash(password));
+    const result = await createUser(userId, username, hash(password1));
 
     return res
             .status(200)
@@ -31,6 +41,15 @@ export const register = async (req, res) => {
 export const login = async (req, res) => {
 
     const { username, password } = req.body;
+
+    if (!validateUsername(req.body.username) || !validatePassword(req.body.password, req.body.password)) {
+        return res
+            .status(200)
+            .json({ 
+                message: "Failed",
+                reason: "Username or password invalid."
+            });
+    }
 
     let result = await getUserAndPasswordByUsername(username);
     result = result[0];
@@ -53,7 +72,7 @@ export const login = async (req, res) => {
                 message: message,
                 reason: reason,
                 data: data
-            })
+            });
 }
 
 export const authorize = async (req, res) => {

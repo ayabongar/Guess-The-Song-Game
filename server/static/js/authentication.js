@@ -33,7 +33,8 @@ async function register(username, password1, password2) {
     
     const data = {
         "username": username,
-        "password": password1
+        "password1": password1,
+        "password2": password2
     }
 
     const authResult = await axios.post(
