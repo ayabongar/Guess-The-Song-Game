@@ -47,3 +47,14 @@ If done properly,  your .env file will contain an entry like this: `LYRICS_API_K
 
 [SQL.txt](https://github.com/benedictdube/guess-the-song/files/11884531/SQL.txt)
 
+## Starting the game
+You will be redirected to the login screen when you don't have an active session.
+Unregistered users can click the Register button, where they will be able to enter a new username and password.
+The password will be rejected by the server unless it:
+1. is cool,  not repeating characters like its 1977.
+2. has at least one special character.
+3. has at least one numeric character (number).
+4. has at least one lower letter.
+5. has at least one upper case letter.
+6. has at least ten characters in total length.
+
