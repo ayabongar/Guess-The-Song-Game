@@ -40,9 +40,6 @@ export const verify = (userId, token) => {
         const { user } = jsonwebtoken.verify(token, process.env.JWT_SECRET + userId);
         const newToken =  jsonwebtoken.sign({ user: user }, process.env.JWT_SECRET + userId, { expiresIn: process.env.JWT_EXPIRATION_TIME});
 
-        console.log(token);
-        console.log(newToken);
-
         return { newToken, user };
     }
     catch (error) {

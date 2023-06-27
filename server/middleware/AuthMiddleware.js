@@ -9,7 +9,6 @@ const verifyRequest = async (req, res, next) => {
     }
 
     if ((!req.cookies.token || !req.cookies.user)) {
-        console.log("No auth");
         res.redirect("/authenticate");
     }
     else {
