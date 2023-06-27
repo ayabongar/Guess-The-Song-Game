@@ -1,7 +1,7 @@
 module.exports = (app) => {
     const staticResourceController = require("../controllers/StaticResourceController");
     const userController = require("../controllers/userController");
-    const gameController = require("../controllers/GameController");
+    const gameController = require("../controllers/gameController");
 
     //Game
     app.get("/past-scores", userController.getPastScores);
