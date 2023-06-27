@@ -77,10 +77,17 @@ async function getScore() {
         withCredentials: true
     }
 
-    const result = await axios.get(
+    let data = {
+        "gameId": game.gameId
+    }
+
+    const result = await axios.post(
         mainUrl + "/score",
+        data,
         config
     );
+
+    console.log(result.data);
 
     return result.data;
 }
