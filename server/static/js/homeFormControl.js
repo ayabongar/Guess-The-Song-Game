@@ -40,9 +40,9 @@ async function switchPlay() {
     mainEl.appendChild(containerEl);
 
 
-    getGame();
+    await getGame();
     const firstRound = getNextRound();
-    await switchRound(firstRound.roundID, firstRound.lyrics, firstRound.options);
+    await switchRound(firstRound.roundId, firstRound.lyrics, firstRound.options);
 }
 
 async function switchRound(roundID, lyrics, options) {

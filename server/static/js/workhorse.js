@@ -16,58 +16,22 @@ function logoutExecute() {
     location.href = "/authenticate";
 }
 
-function getGame() {
-    const result = {
-        gameID: "example",
-        rounds: [
-            {
-                roundId: "1",
-                lyrics: "Baby, bay, baby.. ohhh",
-                options: [
-                    {
-                        artist: "Justin Bieber",
-                        title: "Baby"
-                    },
-                    {
-                        artist: "Post Malone",
-                        title: "Love Me"
-                    },
-                    {
-                        artist: "John Cena",
-                        title: "Goodness"
-                    },
-                    {
-                        artist: "Bob",
-                        title: "FML"
-                    }
-                ]
-            },
-            {
-                roundId: "2",
-                lyrics: "'Got so much wood I can build me a fort",
-                options: [
-                    {
-                        artist: "Justin Bieber",
-                        title: "Baby"
-                    },
-                    {
-                        artist: "Post Malone",
-                        title: "Love Me"
-                    },
-                    {
-                        artist: "John Cena",
-                        title: "Goodness"
-                    },
-                    {
-                        artist: "Bob",
-                        title: "FML"
-                    }
-                ]
-            }
-        ]
+async function getGame() {
+
+    console.log("getting game");
+
+    let config = {
+        withCredentials: true
     }
 
-    game = result;
+    const result = await axios.get(
+        mainUrl + "/getGame",
+        config
+    );
+
+    console.log(result);
+
+    game = result.data;
 }
 
 function getNextRound() {
@@ -76,11 +40,26 @@ function getNextRound() {
 
 async function submitAnswer(roundID, title, artist) {
 
-    //send gameID too
-
-    const result = {
-        isCorrect: true
+    let config = {
+        withCredentials: true
     }
+
+    let data = {
+        gameId: game.gameId,
+        roundId: roundID,
+        answer: {
+            artist: artist,
+            title: title
+        }
+    }
+
+    console.log(data);
+
+    const result = await axios.post(
+        mainUrl + "/submit",
+        data,
+        config
+    );
 
     const nextRound = getNextRound();
 
@@ -89,7 +68,7 @@ async function submitAnswer(roundID, title, artist) {
         return;
     }
 
-    await switchRound(nextRound.roundID, nextRound.lyrics, nextRound.options);
+    await switchRound(nextRound.roundId, nextRound.lyrics, nextRound.options);
 }
 
 async function getScore() {
