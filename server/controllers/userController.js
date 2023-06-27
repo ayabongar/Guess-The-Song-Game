@@ -1,9 +1,25 @@
 const connection = require('../dbService/conn');
 
 exports.getPastScores = (req, res) => {
-    let sql = "SELECT game_id, user_id, score, overall_result, Date FROM Game WHERE user_id = ?";
+    let sql = "SELECT game_id, username, score, overall_result, Date FROM Game WHERE username = ?";
 
-    connection.query(sql, req.query.userId, function (err, results) {
+    connection.query(sql, req.query.username, function (err, results) {
+        if (err) throw err;
+        res.end(JSON.stringify(results));
+    });
+}
+
+exports.insertScore = (req, res) => {
+    let gameId = req.query.gameId;
+    let username = req.query.username;
+    let score = req.query.score;
+    let overallResult = req.query.overallResult;
+    let date = req.query.date;
+
+    const parameters = [gameId, username, score, overallResult, date];
+    let sql = "INSERT INTO Game (game_id, username, score, overall_result, date) VALUES (?,?,?,?,?)";
+
+    connection.query(sql, parameters, function (err, results) {
         if (err) throw err;
         res.end(JSON.stringify(results));
     });
